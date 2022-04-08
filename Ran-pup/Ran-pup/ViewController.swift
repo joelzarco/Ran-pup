@@ -9,6 +9,7 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    let titleLabel = UILabel()
     let dogImageView = UIImageView()
     let downloadButton = UIButton(type: .system)
     let stringUrl : String = "https://dog.ceo/api/breeds/image/random"
@@ -24,6 +25,13 @@ class ViewController: UIViewController {
     
     func style(){
         
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.textAlignment = .center
+        titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
+        titleLabel.adjustsFontForContentSizeCategory = true
+        titleLabel.text = "Random Pup!"
+        titleLabel.textColor = .lightGray
+        
         dogImageView.translatesAutoresizingMaskIntoConstraints = false
         dogImageView.contentMode = .scaleAspectFit
         dogImageView.image = UIImage(named: "wagner")
@@ -38,10 +46,15 @@ class ViewController: UIViewController {
     }
     
     func layout(){
-        // dogImageView
+        
         view.addSubview(dogImageView)
         view.addSubview(downloadButton)
-        dogImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: spacing).isActive = true
+        view.addSubview(titleLabel)
+        
+        titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: margin).isActive = true
+        // dogImageView
+        dogImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: spacing).isActive = true
         dogImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor,constant: margin).isActive = true
         dogImageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -margin).isActive = true
         //downloadButton
