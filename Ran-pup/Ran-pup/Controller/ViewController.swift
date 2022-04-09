@@ -1,7 +1,7 @@
 //
 //  ViewController.swift
 //  Ran-pup
-//  Random dog picture downloaded from dog.ceo API, based on iOS networking with swift
+//  Random dog picture downloaded from dog.ceo API, based on iOS networking with swift Udacity's Course
 //  Created by Johel Zarco on 06/04/22.
 //
 
@@ -54,7 +54,7 @@ class ViewController: UIViewController {
         titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: margin).isActive = true
         // dogImageView
-        dogImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: spacing).isActive = true
+        dogImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 2*margin).isActive = true
         dogImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor,constant: margin).isActive = true
         dogImageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -margin).isActive = true
         //downloadButton
@@ -67,6 +67,33 @@ class ViewController: UIViewController {
     @objc func buttonPressed(sender : UIButton){
         print("button pressed")
         downloadButton.configuration?.showsActivityIndicator = true
+        dataRequestWithCodable()
+    }
+    
+    func dataRequestWithCodable(){
+        
+        let imageURL : URL = DogAPI.parseDogUrl(url: DogAPI.stringUrl)
+        
+        let task = URLSession.shared.dataTask(with: imageURL) { (data, response, error) in
+            guard let data = data else {
+                return
+            }
+            let decoder = JSONDecoder()
+            do{
+                let imageData = try decoder.decode(DogImage.self, from: data)
+                print(imageData.message)
+                // response loooks like:
+                // DogImage(status: "success", message: "https://images.dog.ceo/breeds/doberman/n02107142_12182.jpg")
+                // response is parsed directly into our defined model!!!
+                let messageURL : String = imageData.message
+                //print(messageURL)
+                //self.downloadImage(responseURL: messageURL)
+            }
+            catch{
+                print(error)
+            }
+        }
+        task.resume()
     }
 
 }
