@@ -18,5 +18,4 @@ class DogAPI{
             return URL(string: url)!
         }
     }
-    //
 }

@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     let titleLabel = UILabel()
     let dogImageView = UIImageView()
     let downloadButton = UIButton(type: .system)
-    let stringUrl : String = "https://dog.ceo/api/breeds/image/random"
+    //let stringUrl : String = "https://dog.ceo/api/breeds/image/random"
     
     let margin : CGFloat = 10
     let spacing : CGFloat = 50
@@ -30,7 +30,7 @@ class ViewController: UIViewController {
         titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.text = "Random Pup!"
-        titleLabel.textColor = .lightGray
+        titleLabel.textColor = .white
         
         dogImageView.translatesAutoresizingMaskIntoConstraints = false
         dogImageView.contentMode = .scaleAspectFit
@@ -81,16 +81,33 @@ class ViewController: UIViewController {
             let decoder = JSONDecoder()
             do{
                 let imageData = try decoder.decode(DogImage.self, from: data)
-                print(imageData.message)
+                //print(imageData.message)
                 // response loooks like:
                 // DogImage(status: "success", message: "https://images.dog.ceo/breeds/doberman/n02107142_12182.jpg")
                 // response is parsed directly into our defined model!!!
                 let messageURL : String = imageData.message
-                //print(messageURL)
-                //self.downloadImage(responseURL: messageURL)
+                print(messageURL)
+                self.downloadImage(responseURL: messageURL)
             }
             catch{
                 print(error)
+            }
+        }
+        task.resume()
+    }
+    
+    func downloadImage(responseURL : String){
+        let imageURL : URL =  DogAPI.parseDogUrl(url: responseURL)
+        let task = URLSession.shared.downloadTask(with: imageURL) { location, response, error in
+            guard let location = location else {
+                print("location is nill")
+                return
+            }
+            let imageData = try! Data(contentsOf: location)
+            let image = UIImage(data: imageData)
+            DispatchQueue.main.async {
+                self.dogImageView.image = image
+                self.downloadButton.configuration?.showsActivityIndicator = false
             }
         }
         task.resume()
